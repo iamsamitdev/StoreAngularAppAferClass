@@ -1,0 +1,305 @@
+<main class="ms-sm-auto px-md-4">
+
+    <div class="row pt-3 pb-2 mb-3">
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <h4>PRODUCT STOCK</h4>
+        </div>
+        <div class="col-md-6 col-sm-6 col-xs-6">
+            <button class="btn btn-success float-end" data-bs-toggle="modal" data-bs-target="#addProductModal">ADD PRODUCT</button>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">IMAGE</th>
+            <th scope="col">NAME</th>
+            <th scope="col">PRICE</th>
+            <th scope="col">IN STOCK</th>
+            <th scope="col">CATEGORY</th>
+            <th scope="col">CREATED</th>
+            <th scope="col" [width]="150">MANAGE</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of products">
+            <td>{{ product.productID  }}</td>
+            <td><img src="{{ product.productPicture }}" width="50"></td>
+            <td>{{ product.productName }}</td>
+            <td>{{ product.unitPrice | number: '1.2-2' }}</td>
+            <td>{{ product.unitInStock }}</td>
+            <td>{{ product.categoryName }}</td>
+            <td>{{ product.createdDate | date:'d/M/y' }}</td>
+            <td>
+                <button 
+                  class="btn btn-warning btn-sm" 
+                  (click)="getProductById(product.productID)"
+                  data-bs-toggle="modal"
+                  data-bs-target="#editProductModal"
+                  >EDIT
+                </button>&nbsp;
+                <button 
+                  (click)="getProductById(product.productID)"
+                  class="btn btn-danger btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deleteProductModal"
+                >DELETE</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+</main>
+
+<!-- Modal Add Product -->
+<div class="modal fade" id="addProductModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addProductModalLabel">ADD NEW PRODUCT</h1>
+        <button type="button" id="btnClose" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form [formGroup]="addProductForm" (ngSubmit)="submitAddProduct()">
+        <div class="modal-body">
+          <div [innerHTML]="msgStatusAdd" class="my-2"></div>
+            <div class="mb-3 row">
+              <label for="productName" class="col-sm-3 col-form-label">Name</label>
+              <div class="col-sm-9">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="productName" 
+                  name="productName" 
+                  formControlName="productName"
+                  placeholder="Name"
+                  [ngClass]="{'is-invalid': submittedAdd && addProductForm.controls.productName.errors}">
+                  <div *ngIf="submittedAdd &&  addProductForm.controls.productName.errors" class="invalid-feedback">
+                    <div *ngIf="addProductForm.controls.productName.errors.required">ป้อนชื่อสินค้าก่อน</div>
+                    <div *ngIf="addProductForm.controls.productName.errors.minlength">อย่างน้อย 3 ตัวอักษร</div>
+                  </div>
+              </div>
+            </div>
+
+            <div class="mb-3 row">
+              <label for="unitPrice" class="col-sm-3 col-form-label">Price</label>
+              <div class="col-sm-9">
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  id="unitPrice" 
+                  name="unitPrice" 
+                  formControlName="unitPrice"
+                  placeholder="Price"
+                  [ngClass]="{'is-invalid': submittedAdd && addProductForm.controls.unitPrice.errors}">
+                  <div *ngIf="submittedAdd &&  addProductForm.controls.unitPrice.errors" class="invalid-feedback">
+                    <div *ngIf="addProductForm.controls.unitPrice.errors.required">ป้อนราคาก่อน</div>
+                  </div>
+              </div>
+            </div>
+
+            <div class="mb-3 row">
+              <label for="unitInStock" class="col-sm-3 col-form-label">Qty</label>
+              <div class="col-sm-9">
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  id="unitInStock" 
+                  name="unitInStock" 
+                  formControlName="unitInStock"
+                  placeholder="Unit in stock"
+                  [ngClass]="{'is-invalid': submittedAdd && addProductForm.controls.unitInStock.errors}">
+                  <div *ngIf="submittedAdd &&  addProductForm.controls.unitInStock.errors" class="invalid-feedback">
+                    <div *ngIf="addProductForm.controls.unitInStock.errors.required">ป้อนจำนวนก่อน</div>
+                  </div>
+              </div>
+            </div>
+
+            <div class="mb-3 row">
+              <label for="categoryId" class="col-sm-3 col-form-label">Category</label>
+              <div class="col-sm-9">
+                <select 
+                  class="form-select" 
+                  id="categoryId" 
+                  name="categoryId"
+                  formControlName="categoryId"
+                  [ngClass]="{'is-invalid': submittedAdd && addProductForm.controls.categoryId.errors}"
+                  >
+                  <option value="">เลือกหมวดหมู่</option>
+                  <option *ngFor="let category of categories" [value]="category.categoryId">
+                    {{ category.categoryName }}
+                  </option>
+                </select>
+                <div *ngIf="submittedAdd &&  addProductForm.controls.categoryId.errors" class="invalid-feedback">
+                  <div *ngIf="addProductForm.controls.categoryId.errors.required">เลือกหมวดหมู่ก่อน</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3 row">
+              <label for="productPicture" class="col-sm-3 col-form-label">Image</label>
+              <div class="col-sm-9">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="productPicture" 
+                  name="productPicture" 
+                  formControlName="productPicture"
+                  placeholder="Picture"
+                  [ngClass]="{'is-invalid': submittedAdd && addProductForm.controls.productPicture.errors}">
+                  <div *ngIf="submittedAdd &&  addProductForm.controls.productPicture.errors" class="invalid-feedback">
+                    <div *ngIf="addProductForm.controls.productPicture.errors.required">ป้อน url ของรูป</div>
+                  </div>
+              </div>
+            </div>
+          
+        </div>
+        <div class="modal-footer text-center">
+          <button type="submit" name="addproduct" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Model Edit Product -->
+<div class="modal fade" id="editProductModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editProductModalLabel">EDIT PRODUCT</h1>
+        <button type="button" id="btnCloseEdit" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form [formGroup]="editProductForm" (ngSubmit)="submitEditProduct()">
+        <div class="modal-body">
+          <div [innerHTML]="msgStatusEdit" class="my-2"></div>
+
+            <div class="mb-3 row">
+              <label for="productName" class="col-sm-3 col-form-label">Name</label>
+              <div class="col-sm-9">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="productName" 
+                  name="productName"
+                  formControlName="productName"
+                  placeholder="Name"
+                  [ngClass]="{'is-invalid': submittedEdit && editProductForm.controls.productName.errors}">
+                  <div *ngIf="submittedEdit &&  editProductForm.controls.productName.errors" class="invalid-feedback">
+                    <div *ngIf="editProductForm.controls.productName.errors.required">ป้อนชื่อสินค้าก่อน</div>
+                    <div *ngIf="editProductForm.controls.productName.errors.minlength">อย่างน้อย 3 ตัวอักษร</div>
+                  </div>
+              </div>
+            </div>
+
+            <div class="mb-3 row">
+              <label for="unitPrice" class="col-sm-3 col-form-label">Price</label>
+              <div class="col-sm-9">
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  id="unitPrice" 
+                  name="unitPrice" 
+                  formControlName="unitPrice"
+                  placeholder="Price"
+                  [ngClass]="{'is-invalid': submittedEdit && editProductForm.controls.unitPrice.errors}">
+                  <div *ngIf="submittedEdit &&  editProductForm.controls.unitPrice.errors" class="invalid-feedback">
+                    <div *ngIf="editProductForm.controls.unitPrice.errors.required">ป้อนราคาก่อน</div>
+                  </div>
+              </div>
+            </div>
+
+            <div class="mb-3 row">
+              <label for="unitInStock" class="col-sm-3 col-form-label">Qty</label>
+              <div class="col-sm-9">
+                <input 
+                  type="number" 
+                  class="form-control" 
+                  id="unitInStock" 
+                  name="unitInStock" 
+                  formControlName="unitInStock"
+                  placeholder="Unit in stock"
+                  [ngClass]="{'is-invalid': submittedEdit && editProductForm.controls.unitInStock.errors}">
+                  <div *ngIf="submittedEdit &&  editProductForm.controls.unitInStock.errors" class="invalid-feedback">
+                    <div *ngIf="editProductForm.controls.unitInStock.errors.required">ป้อนจำนวนก่อน</div>
+                  </div>
+              </div>
+            </div>
+
+            <div class="mb-3 row">
+              <label for="categoryId" class="col-sm-3 col-form-label">Category</label>
+              <div class="col-sm-9">
+                <select 
+                  class="form-select" 
+                  id="categoryId" 
+                  name="categoryId"
+                  formControlName="categoryId"
+                  [ngClass]="{'is-invalid': submittedEdit && editProductForm.controls.categoryId.errors}"
+                  >
+                  <option value="">เลือกหมวดหมู่</option>
+                  <option *ngFor="let category of categories" [value]="category.categoryId">
+                    {{ category.categoryName }}
+                  </option>
+                </select>
+                <div *ngIf="submittedEdit &&  editProductForm.controls.categoryId.errors" class="invalid-feedback">
+                  <div *ngIf="editProductForm.controls.categoryId.errors.required">เลือกหมวดหมู่ก่อน</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3 row">
+              <label for="productPicture" class="col-sm-3 col-form-label">Image</label>
+              <div class="col-sm-9">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="productPicture" 
+                  name="productPicture" 
+                  formControlName="productPicture"
+                  placeholder="Picture"
+                  [ngClass]="{'is-invalid': submittedEdit && editProductForm.controls.productPicture.errors}">
+                  <div *ngIf="submittedEdit &&  editProductForm.controls.productPicture.errors" class="invalid-feedback">
+                    <div *ngIf="editProductForm.controls.productPicture.errors.required">ป้อน url ของรูป</div>
+                  </div>
+              </div>
+            </div>
+
+            <input type="hidden" id="productID" name="productID" formControlName="productID">
+
+        </div>
+        <div class="modal-footer text-center">
+          <button type="submit" name="editproduct" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Confirm Delete Product -->
+<div class="modal fade" id="deleteProductModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deleteProductModalLabel">CONFIRM DELETE PRODUCT</h1>
+        <button type="button" id="btnCloseDelete" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body
+      ">
+        <div [innerHTML]="msgStatusDelete" class="my-2"></div>
+        <p>Are you sure to delete this product?</p>
+      </div>
+      <div class="modal-footer text-center">
+        <form [formGroup]="deleteProductForm" (ngSubmit)="deleteProduct()">
+          <input type="hidden" id="productID" name="productID" formControlName="productID">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>&nbsp;
+          <button 
+            type="submit" 
+            class="btn btn-danger"
+            >Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,68 @@
+<div class="container-fluid" style="margin-top:100px">
+    <p class="text-center my-5"><a routerLink="" class="text-secondary text-decoration-none"><i class="fas fa-arrow-left"></i> &nbsp;กลับหน้าหลัก</a></p>
+    <div class="rounded d-flex justify-content-center">
+        <div class="col-sm-12 col-md-6 col-lg-4 shadow-lg p-5">
+            <div [innerHTML]="msgStatus"></div>
+            <form [formGroup]="registerForm" (ngSubmit)="submitRegister()">
+                <div class="py-4">
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-primary">
+                            <i class="far fa-user text-light"></i>
+                        </span>
+                        <input type="text" 
+                        class="form-control"
+                        [ngClass]="{'is-invalid': submitted && registerForm.controls.username.errors}"
+                        name="username" 
+                        id="username" 
+                        formControlName="username"
+                        placeholder="Username">
+                        <div *ngIf="submitted &&  registerForm.controls.username.errors" class="invalid-feedback">
+                            <div *ngIf="registerForm.controls.username.errors.required">ป้อน Username ก่อน</div>
+                            <div *ngIf="registerForm.controls.username.errors.minlength">อย่างน้อย 3 ตัวอักษร</div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-primary">
+                            <i class="far fa-envelope text-light"></i>
+                        </span>
+                        <input type="text" 
+                        class="form-control"
+                        [ngClass]="{'is-invalid': submitted && registerForm.controls.email.errors}"
+                        name="email" 
+                        id="email" 
+                        formControlName="email"
+                        placeholder="Email">
+                        <div *ngIf="submitted &&  registerForm.controls.email.errors" class="invalid-feedback">
+                            <div *ngIf="registerForm.controls.email.errors.required">ป้อน Email ก่อน</div>
+                            <div *ngIf="registerForm.controls.email.errors.email">รูปแบบ Email ไม่ถูกต้อง</div>
+                        </div>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text bg-primary">
+                            <i class="fas fa-lock text-light"></i>
+                        </span>
+                        <input type="password" 
+                        class="form-control" 
+                        [ngClass]="{'is-invalid': submitted && registerForm.controls.password.errors}"
+                        name="password" 
+                        id="password" 
+                        formControlName="password"
+                        placeholder="Password">
+                        
+                        <div *ngIf="submitted &&  registerForm.controls.password.errors" class="invalid-feedback">
+                            <div *ngIf="registerForm.controls.password.errors.required">ป้อนรหัสผ่านก่อน</div>
+                            <div *ngIf="registerForm.controls.password.errors.minlength">อย่างน้อย 6 ตัวอักษร</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-primary text-center mt-3 w-100" name="register" type="submit">
+                        ลงทะเบียน
+                    </button>
+                    <p class="text-center mt-5">เป็นสมาชิกอยู่แล้ว ?
+                        <a routerLink="/auth/login" class="text-primary text-decoration-none">เข้าสู่ระบบ</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

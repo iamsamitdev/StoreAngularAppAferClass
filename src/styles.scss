@@ -1,0 +1,65 @@
+html, body {
+    margin: 0; 
+    // height: 100%; 
+    font-family: 'Noto Sans Thai', Poppins, sans-serif; 
+}
+
+h1, h4 {
+    font-weight: bold;
+}
+
+section.footer {
+    background-color: #cfd8dc !important;
+}
+
+.carousel-item img {
+    width: 100%;
+}
+
+.navbar-light .navbar-nav .nav-link{
+    font-size: 18px;
+}
+
+.navbar-light .navbar-nav .nav-link.active{
+    color: brown;
+    font-weight: bold;
+}
+
+.navbar-light .navbar-toggler{
+    border: none;
+    outline: none;
+}
+
+.navbar-toggler:focus{
+    box-shadow: none;
+}
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    border-radius: .25rem;
+}
+
+.card .card-header {
+    background-color: #fff;
+    border-bottom: none;
+}
+
+@media only screen and (max-width: 600px) {
+    .carousel-item img {
+        width: auto !important;
+        height: 450px;
+    }
+    .navbar-light .navbar-nav .nav-link{
+        text-align: center;
+    }
+    .bg-light{
+        background-color: #cfd8dc !important;
+    }
+}
